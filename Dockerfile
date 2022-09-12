@@ -10,6 +10,7 @@ LABEL rabbitmq="AMQP"
 #ENV
 ENV WEB=/var/www/html 
 ENV TZ=Europe/Budapest
+WORKDIR $WEB
 
 #update php and addons
 ENV ACCEPT_EULA=Y
@@ -26,5 +27,3 @@ RUN pecl install
 RUN composer require php-amqplib/php-amqplib
 RUN composer install
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv mysqli amqp
-
-WORKDIR $WEB
