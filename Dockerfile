@@ -1,3 +1,6 @@
+FROM composer AS composer
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
 FROM  php:apache
 LABEL maintainer="walter20020110@gmail.com"
 LABEL mysql="MySQl with mysqli"
@@ -20,6 +23,8 @@ RUN pecl install sqlsrv
 RUN pecl install pdo_sqlsrv
 RUN pecl install amqp
 RUN pecl install 
+RUN composer require php-amqplib/php-amqplib
+RUN composer install
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv mysqli
 
 WORKDIR $WEB
