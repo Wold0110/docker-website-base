@@ -26,5 +26,5 @@ RUN pecl install pdo_sqlsrv
 RUN pecl install amqp
 RUN pecl install 
 RUN composer require php-amqplib/php-amqplib
-RUN composer install --working-dir=/home/someuser/myproject
+RUN composer install --working-dir=$WEV
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv mysqli amqp
