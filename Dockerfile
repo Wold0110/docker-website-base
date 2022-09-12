@@ -1,34 +1,25 @@
-FROM ubuntu/apache2
+FROM  php:apache
 LABEL maintainer="walter20020110@gmail.com"
+LABEL mysql="MySQl with mysqli"
+LABEL sqlsrv="MSSQl with sqlsrv"
+LABEL rabbitmq="AMQP"
 
-#apache root dir
+#ENV
 ENV WEB=/var/www/html 
 ENV TZ=Europe/Budapest
 
-USER root
-#basic php
-	RUN apt install php php-mysqli -y
-	
-# Install prerequisites required for tools and extensions installed later on.
-	RUN apt-get update \
-		&& apt-get install -y apt-transport-https gnupg2 libpng-dev libzip-dev nano unzip \
-		&& rm -rf /var/lib/apt/lists/*
+#update php and addons
+ENV ACCEPT_EULA=Y
+RUN apt-get update && apt-get install -y gnupg2
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list 
+RUN apt-get update 
+RUN ACCEPT_EULA=Y apt-get -y --no-install-recommends install msodbcsql17 unixodbc-dev 
+RUN docker-php-ext-install mysqli
+RUN pecl install sqlsrv
+RUN pecl install pdo_sqlsrv
+RUN pecl install amqp
+RUN pecl install 
+RUN docker-php-ext-enable sqlsrv pdo_sqlsrv mysqli
 
-
-# Install prerequisites for the sqlsrv and pdo_sqlsrv PHP extensions.
-	RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-		&& curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-		&& apt-get update \
-		&& apt-get install -y msodbcsql17 mssql-tools unixodbc-dev \
-		&& rm -rf /var/lib/apt/lists/*
-		
-# Install required PHP extensions and all their prerequisites available via apt.
-	RUN chmod uga+x /usr/bin/install-php-extensions \
-		&& sync \
-		&& install-php-extensions amqp bcmath ds exif gd intl opcache pcntl pcov pdo_sqlsrv redis sqlsrv zip
-
-		
-
-	WORKDIR $WEB
-
-RUN ["mv","index.html","apache.html"]
+WORKDIR $WEB
