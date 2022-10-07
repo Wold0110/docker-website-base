@@ -12,7 +12,7 @@ LABEL rabbitmq="AMQP"
 ENV WEB=/var/www/html 
 ENV TZ=Europe/Budapest
 WORKDIR $WEB
-COPY composer.json composer.json
+COPY composer.json /var/www/composer/composer.json
 #update php and addons
 ENV ACCEPT_EULA=Y
 RUN apt-get update && apt-get install -y gnupg2 librabbitmq-dev libssh-dev zip unzip
