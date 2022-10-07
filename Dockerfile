@@ -1,15 +1,12 @@
 FROM composer AS composer
-
-
-FROM  php:apache
+FROM php:apache
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 LABEL maintainer="walter20020110@gmail.com"
 LABEL mysql="MySQl with mysqli"
 LABEL sqlsrv="MSSQl with sqlsrv"
 LABEL rabbitmq="AMQP"
+LABEL redis="predis"
 
-#ENV
-ENV WEB=/var/www/html 
 ENV TZ=Europe/Budapest
 WORKDIR $WEB
 COPY composer.json composer.json
@@ -27,5 +24,5 @@ RUN pecl install amqp
 RUN pecl install 
 RUN composer require php-amqplib/php-amqplib
 RUN composer require predis/predis
-RUN composer install --working-dir=/var/www/html 
+RUN composer install --working-dir=/var/www 
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv mysqli amqp
